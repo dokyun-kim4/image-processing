@@ -11,6 +11,9 @@ import cv2 as cv
 import matplotlib.pyplot as plt
 
 def display(image):
+    """
+    deals with opencv being in BGR and matplotlib being in RGB
+    """
     plt.figure()
     plt.imshow(cv.cvtColor(image, cv.COLOR_BGR2RGB))
     plt.show()
@@ -44,8 +47,6 @@ img2 = cv.imread("image2.jpg")
 
 
 # b) Plot at least 4 different histograms for each image from the various color spaces
-
-
 ```
 
 Were these color spaces useful for your chosen image?
