@@ -1,0 +1,71 @@
+---
+title: 'Group Assignment 2 - Image as a function, matrix, convolution'
+jupyter: python3
+---
+
+### Amanda C, Dokyun K, Jun P
+
+
+```{python}
+import cv2 as cv
+import matplotlib.pyplot as plt
+
+def display(image):
+    plt.figure()
+    plt.imshow(cv.cvtColor(image, cv.COLOR_BGR2RGB))
+    plt.show()
+```
+
+```{python}
+# Load Image
+img1 = cv.imread("image1.jpg")
+img2 = cv.imread("image2.jpg")
+```
+
+### Part 1: Pixel Processing
+
+```{python}
+# a) change brightness
+
+
+
+# b) change contrast
+
+
+
+
+# c) change brightness of alternating pixels
+```
+
+### Part 2: Color Spaces
+
+```{python}
+# a) show images in different color spaces (RGB and HSV)
+
+
+# b) Plot at least 4 different histograms for each image from the various color spaces
+
+
+```
+
+Were these color spaces useful for your chosen image?
+
+### Part 3: Convolution/linear filtering
+
+```{python}
+# a) Apply identity filter to both images
+
+
+
+
+# b) Apply box filter of 2 different sizes to both images (total 4 images)
+
+
+# c) Think about what a sharpening filter would look like and apply it to your 2 images
+
+
+
+
+# d) Design a 3 x 3 Gaussian filter and apply it to your 2 images
+```
+
