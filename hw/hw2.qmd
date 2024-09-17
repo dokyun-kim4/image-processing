@@ -3,12 +3,10 @@ title: 'Group Assignment 2 - Image as a function, matrix, convolution'
 jupyter: python3
 ---
 
-### Amanda C, Dokyun K, Jun P
-
-
 ```{python}
 import cv2 as cv
 import matplotlib.pyplot as plt
+import numpy as np
 
 def display(image):
     """
@@ -21,8 +19,11 @@ def display(image):
 
 ```{python}
 # Load Image
-img1 = cv.imread("image1.jpg")
-img2 = cv.imread("image2.jpg")
+img1 = cv.imread("img0.jpg")
+img2 = cv.imread("img1.jpg")
+
+display(img1)
+display(img2)
 ```
 
 ### Part 1: Pixel Processing
@@ -30,14 +31,32 @@ img2 = cv.imread("image2.jpg")
 ```{python}
 # a) change brightness
 
+img1_bright = cv.add(img1, -128)
 
+img2_bright = cv.add(img2, 128)
+
+display(img1_bright)
+display(img2_bright)
 
 # b) change contrast
 
+img1_contrast = cv.divide(img1, 2)
 
+img2_contrast = cv.divide(img2, 0.5)
 
+display(img1_contrast)
+display(img2_contrast)
 
 # c) change brightness of alternating pixels
+b = np.array([[128, 0], [0, 128]])
+img1_alt = np.tile(b, (np.shape(img1)[0]//2,np.shape(img1)[1]//2))
+
+matrix = cv.merge([img1_alt, img1_alt, img1_alt])
+matrix = matrix.astype(img1.dtype)
+
+display(img1)
+display(cv.add(img1,matrix))
+
 ```
 
 ### Part 2: Color Spaces
@@ -60,6 +79,8 @@ Were these color spaces useful for your chosen image?
 
 
 # b) Apply box filter of 2 different sizes to both images (total 4 images)
+
+
 
 
 # c) Think about what a sharpening filter would look like and apply it to your 2 images
