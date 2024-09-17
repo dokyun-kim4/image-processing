@@ -1,29 +1,33 @@
 ---
-title: 'Group Assignment 2 - Image as a function, matrix, convolution'
 jupyter: python3
 ---
+
+Assignment 2  
+By Amanda C, Dokyun K, Jun P
 
 ```{python}
 import cv2 as cv
 import matplotlib.pyplot as plt
 import numpy as np
+import math
 
-def display(image):
+def display(image, title="figure"):
     """
     deals with opencv being in BGR and matplotlib being in RGB
     """
     plt.figure()
     plt.imshow(cv.cvtColor(image, cv.COLOR_BGR2RGB))
+    plt.title(title)
     plt.show()
 ```
 
 ```{python}
 # Load Image
-img1 = cv.imread("img0.jpg")
-img2 = cv.imread("img1.jpg")
+img1 = cv.imread("../img0.jpg")
+img2 = cv.imread("../img1.jpg")
 
-display(img1)
-display(img2)
+display(img1, "image 1")
+display(img2, "image 2")
 ```
 
 ### Part 1: Pixel Processing
@@ -31,21 +35,21 @@ display(img2)
 ```{python}
 # a) change brightness
 
-img1_bright = cv.add(img1, -128)
+img1_bright = cv.add(img1, -128) # type: ignore
 
-img2_bright = cv.add(img2, 128)
+img2_bright = cv.add(img2, 128) # type: ignore
 
-display(img1_bright)
-display(img2_bright)
+display(img1_bright, "lower brightness")
+display(img2_bright, "increase brightness")
 
 # b) change contrast
 
-img1_contrast = cv.divide(img1, 2)
+img1_contrast = cv.divide(img1, 2) # type: ignore
 
-img2_contrast = cv.divide(img2, 0.5)
+img2_contrast = cv.divide(img2, 0.5) # type: ignore
 
-display(img1_contrast)
-display(img2_contrast)
+display(img1_contrast, "half contrast")
+display(img2_contrast, "double contrast")
 
 # c) change brightness of alternating pixels
 b = np.array([[128, 0], [0, 128]])
@@ -54,18 +58,85 @@ img1_alt = np.tile(b, (np.shape(img1)[0]//2,np.shape(img1)[1]//2))
 matrix = cv.merge([img1_alt, img1_alt, img1_alt])
 matrix = matrix.astype(img1.dtype)
 
-display(img1)
-display(cv.add(img1,matrix))
-
+display(img1, "original")
+display(cv.add(img1,matrix), "alternating brightness change")
 ```
 
 ### Part 2: Color Spaces
 
 ```{python}
 # a) show images in different color spaces (RGB and HSV)
+b1,g1,r1 = img1[:,:,0], img1[:,:,1], img1[:,:,2]
+b2,g2,r2 = img2[:,:,0], img2[:,:,1], img2[:,:,2]
+zeros = np.zeros((img1.shape[0], img1.shape[1])).astype('uint8')
+
+channels_bgr_1 = [cv.merge([b1,zeros,zeros]), cv.merge([zeros,g1,zeros]), cv.merge([zeros,zeros,r1])]
+channels_bgr_2 = [cv.merge([b2,zeros,zeros]), cv.merge([zeros,g2,zeros]), cv.merge([zeros,zeros,r2])]
+titles_bgr = ['blue', 'green', 'red']
+
+img1_hsv = cv.cvtColor(img1, cv.COLOR_BGR2HSV)
+img2_hsv = cv.cvtColor(img2, cv.COLOR_BGR2HSV)
+channels_hsv_1 = [img1_hsv[:,:,0], img1_hsv[:,:,1], img1_hsv[:,:,2]]
+channels_hsv_2 = [img2_hsv[:,:,0], img2_hsv[:,:,1], img2_hsv[:,:,2]]
+titles_hsv = ['hue', 'saturation', 'value']
+
+    
+# Show RGB for both images
+
+plt.figure(figsize=(10, 7))
+i = 1
+for channel, title in zip(channels_bgr_1,titles_bgr):
+    # Display hue
+    plt.subplot(1, 3, i)
+    plt.imshow(cv.cvtColor(channel, cv.COLOR_BGR2RGB))
+    plt.title(title)
+    plt.axis('off')
+    i += 1
+plt.tight_layout()
+plt.show()
 
 
+plt.figure(figsize=(10, 7))
+i = 1
+for channel, title in zip(channels_bgr_2,titles_bgr):
+    # Display hue
+    plt.subplot(1, 3, i)
+    plt.imshow(cv.cvtColor(channel, cv.COLOR_BGR2RGB))
+    plt.title(title)
+    plt.axis('off')
+    i += 1
+plt.tight_layout()
+plt.show()
+
+
+# Show HSV for both images
+
+plt.figure(figsize=(10, 7))
+i = 1
+for channel, title in zip(channels_hsv_1,titles_hsv):
+    plt.subplot(1, 3, i)
+    plt.imshow(channel, cmap='gray')
+    plt.title(title)
+    plt.axis('off')
+    i += 1
+plt.tight_layout()
+plt.show()
+
+plt.figure(figsize=(10, 7))
+i = 1
+for channel, title in zip(channels_hsv_2,titles_hsv):
+    plt.subplot(1, 3, i)
+    plt.imshow(channel, cmap='gray')
+    plt.title(title)
+    plt.axis('off')
+    i += 1
+plt.tight_layout()
+plt.show()
+```
+
+```{python}
 # b) Plot at least 4 different histograms for each image from the various color spaces
+
 ```
 
 Were these color spaces useful for your chosen image?
@@ -75,19 +146,127 @@ Were these color spaces useful for your chosen image?
 ```{python}
 # a) Apply identity filter to both images
 
+iden_filter = np.array([[0,0,0],[0,1,0],[0,0,0]])
 
+img1_iden = cv.filter2D(img1, -1, iden_filter)
+img2_iden = cv.filter2D(img2, -1, iden_filter)
 
+plt.figure(figsize=(10, 7))
 
+plt.subplot(1, 2, 1)
+plt.imshow(cv.cvtColor(img1_iden, cv.COLOR_BGR2RGB))
+plt.title("Identity filter applied to img 1")
+plt.axis('off')
+
+plt.subplot(1, 2, 2)
+plt.imshow(cv.cvtColor(img2_iden, cv.COLOR_BGR2RGB))
+plt.title("Identity filter applied to img 2")
+plt.axis('off')
+
+plt.tight_layout()
+plt.show()
+```
+
+```{python}
 # b) Apply box filter of 2 different sizes to both images (total 4 images)
 
+box_filter1 = np.ones((3,3), dtype='uint8') / 9
+box_filter2 = np.ones((5,5), dtype='uint8') / 25
 
+img1_box1 = cv.filter2D(img1, -1, box_filter1)
+img1_box2 = cv.filter2D(img1, -1, box_filter2)
+img2_box1 = cv.filter2D(img2, -1, box_filter1)
+img2_box2 = cv.filter2D(img2, -1, box_filter2)
 
+plt.figure(figsize=(10, 7))
 
+plt.subplot(2, 2, 1)
+plt.imshow(cv.cvtColor(img1_box1, cv.COLOR_BGR2RGB))
+plt.title("Box filter 1 applied to img 1")
+plt.axis('off')
+
+plt.subplot(2, 2, 2)
+plt.imshow(cv.cvtColor(img1_box2, cv.COLOR_BGR2RGB))
+plt.title("Box filter 2 applied to img 1")
+plt.axis('off')
+
+plt.subplot(2, 2, 3)
+plt.imshow(cv.cvtColor(img2_box1, cv.COLOR_BGR2RGB))
+plt.title("Box filter 1 applied to img 2")
+plt.axis('off')
+
+plt.subplot(2, 2, 4)
+plt.imshow(cv.cvtColor(img2_box2, cv.COLOR_BGR2RGB))
+plt.title("Box filter 2 applied to img 2")
+plt.axis('off')
+
+plt.tight_layout()
+plt.show()
+```
+
+```{python}
 # c) Think about what a sharpening filter would look like and apply it to your 2 images
 
+sharp_filter = np.array([
+                        [0,-1,0],
+                        [-1,5,-1],
+                        [0,-1,0]
+                        ])
+    
+img1_sharp = cv.filter2D(img1, -1, sharp_filter)
+img2_sharp = cv.filter2D(img2, -1, sharp_filter)
 
+plt.figure(figsize=(10, 7))
 
+plt.subplot(1, 2, 1)
+plt.imshow(cv.cvtColor(img1_sharp, cv.COLOR_BGR2RGB))
+plt.title("Sharpening filter applied to img 1")
+plt.axis('off')
 
+plt.subplot(1, 2, 2)
+plt.imshow(cv.cvtColor(img2_sharp, cv.COLOR_BGR2RGB))
+plt.title("Sharpening filter applied to img 2")
+plt.axis('off')
+
+plt.tight_layout()
+plt.show()
+```
+
+```{python}
 # d) Design a 3 x 3 Gaussian filter and apply it to your 2 images
+
+def calc_gaussian(i,j,var):
+    frac = (1/(2*math.pi*var))
+    expo = math.exp(-0.5*((i**2 + j**2)/ var))
+
+    return (frac * expo)
+
+var = 4
+size = 3
+center = size // 2
+gaus_filter = np.array([[calc_gaussian(i - center, j - center, var) 
+                            for j in range(size)] 
+                            for i in range(size)])
+
+# Normalize
+gaus_filter /= np.sum(gaus_filter)
+
+img1_gauss = cv.filter2D(img1, -1, gaus_filter)
+img2_gauss = cv.filter2D(img2, -1, gaus_filter)
+
+plt.figure(figsize=(10, 7))
+
+plt.subplot(1, 2, 1)
+plt.imshow(cv.cvtColor(img1_gauss, cv.COLOR_BGR2RGB))
+plt.title("Gaussian filter applied to img 1")
+plt.axis('off')
+
+plt.subplot(1, 2, 2)
+plt.imshow(cv.cvtColor(img2_gauss, cv.COLOR_BGR2RGB))
+plt.title("Gaussian filter applied to img 2")
+plt.axis('off')
+
+plt.tight_layout()
+plt.show()
 ```
 
