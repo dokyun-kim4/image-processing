@@ -4,7 +4,6 @@ title: 'Part 1: Pixel Processing'
 ---
 
 ```{python}
-#| vscode: {languageId: python}
 import cv2 as cv
 import matplotlib.pyplot as plt
 import numpy as np
@@ -22,7 +21,6 @@ def display(image, title="figure"):
 ```
 
 ```{python}
-#| vscode: {languageId: python}
 # Load Image
 img1 = cv.imread("../img0.jpg")
 img2 = cv.imread("../img1.jpg")
@@ -34,7 +32,6 @@ display(img2, "image 2")
 
 
 ```{python}
-#| vscode: {languageId: python}
 # a) change brightness
 
 img1_bright = cv.add(img1, -128) # type: ignore
@@ -67,7 +64,6 @@ display(cv.add(img1,matrix), "alternating brightness change")
 ### Part 2: Color Spaces
 
 ```{python}
-#| vscode: {languageId: python}
 # a) show images in different color spaces (RGB and HSV)
 b1,g1,r1 = img1[:,:,0], img1[:,:,1], img1[:,:,2]
 b2,g2,r2 = img2[:,:,0], img2[:,:,1], img2[:,:,2]
@@ -138,7 +134,6 @@ plt.show()
 ```
 
 ```{python}
-#| vscode: {languageId: python}
 # b) Plot at least 4 different histograms for each image from the various color spaces
 channel_list = [channels_bgr_1, channels_hsv_1, channels_bgr_2, channels_hsv_2]
 
@@ -162,12 +157,17 @@ for i, channel in enumerate(channel_list):
     plt.show()
 ```
 
-Were these color spaces useful for your chosen image?
+#### Were these color spaces useful for your chosen image? Did they show something that you would not see in a color or grayscale image? Did the histograms show something useful?
+
+The green color space for the RGB color filters was most useful for our image of people, likely because it appears brighter and also because skin tones do not typically contain much green. Furthermore, the original image was taken with a green filter. However, our results for the HSV color space were more interesting. The image of Olin's campus in the saturation color space made the distinction between the top of the tree line and Milas Hall much clearer, even more so than in the original color image or in the grayscale. This could be useful for categorization of different features in an image. This is also evident in the corresponding histogram (img1 is Olin's campus, while img2 is an image of people), as you can see that there are many distinct peaks, corresponding to different features. 
+
+Another interesting result from our color space exploration was of Dokyun's shirt logo and the laptop sticker in the background. The hue color space for img2 was very good at picking out the logo, as it was a different color than the shirt, while the laptop sticker was best seen in the saturation image because it shared a similar hue to the laptop but dissimilar saturation. Both of these distinctions were highlighted by their corresponding color spaces and were more obvious than in the original green filtered image. However, it was difficult to see this result from the histogram, possibly because the shades in both the logo and sticker were present elsewhere in the image.
+
+
 
 ### Part 3: Convolution/linear filtering
 
 ```{python}
-#| vscode: {languageId: python}
 # a) Apply identity filter to both images
 
 iden_filter = np.array([[0,0,0],[0,1,0],[0,0,0]])
@@ -192,7 +192,6 @@ plt.show()
 ```
 
 ```{python}
-#| vscode: {languageId: python}
 # b) Apply box filter of 2 different sizes to both images (total 4 images)
 
 box_filter1 = np.ones((3,3), dtype='uint8') / 9
@@ -230,7 +229,6 @@ plt.show()
 ```
 
 ```{python}
-#| vscode: {languageId: python}
 # c) Think about what a sharpening filter would look like and apply it to your 2 images
 
 sharp_filter = np.array([
@@ -259,7 +257,6 @@ plt.show()
 ```
 
 ```{python}
-#| vscode: {languageId: python}
 # d) Design a 3 x 3 Gaussian filter and apply it to your 2 images
 
 def calc_gaussian(i,j,var):
